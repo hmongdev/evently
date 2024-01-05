@@ -2,6 +2,8 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../ui/button';
+import NavItems from './NavItems';
+import RightNav from './RightNav';
 
 const Header = () => {
 	return (
@@ -15,19 +17,20 @@ const Header = () => {
 						height={38}
 					/>
 				</Link>
-
+				{/* on medium+ screens, show the links in header */}
 				<SignedIn>
 					<nav className="md:flex-between hidden w-full max-w-xs">
-						{/* <NavItems /> */}
+						<NavItems />
 					</nav>
 				</SignedIn>
 
 				<div className="flex w-32 justify-end gap-3">
+					{/* UserButton shows up if user is signed in */}
 					<SignedIn>
-						{/* UserButton shows up if user is signed in */}
 						<UserButton afterSignOutUrl="/" />
-						{/* <MobileNav /> */}
+						<RightNav />
 					</SignedIn>
+
 					<SignedOut>
 						<Button
 							asChild
