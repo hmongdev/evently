@@ -59,7 +59,10 @@ export default async function Home() {
 				</h2>
 
 				<div className="flex w-full flex-col gap-5 md:flex-row">
-					Search Filter
+					<ul>
+						<li>Search</li>
+						<li>Filter</li>
+					</ul>
 				</div>
 				{/* Events */}
 				{/* <Collection
