@@ -15,4 +15,6 @@ const UserSchema = new Schema({
 
 // 4. create User that is based off our schema
 // 5. export User model
-export const User = models.User || model('User', UserSchema);
+const User = models.User || model('User', UserSchema);
+
+export default User;
