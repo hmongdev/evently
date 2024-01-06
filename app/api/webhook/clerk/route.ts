@@ -1,5 +1,7 @@
-import { WebhookEvent } from '@clerk/nextjs/server';
+import { createUser } from '@/lib/actions/user.actions';
+import { WebhookEvent, clerkClient } from '@clerk/nextjs/server';
 import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
 import { Webhook } from 'svix';
 
 export async function POST(req: Request) {
@@ -52,7 +54,7 @@ export async function POST(req: Request) {
 	const { id } = evt.data;
 	const eventType = evt.type;
 
-	//! trigger events when a user is created
+	//! CREATE USER
 	if (eventType === 'user.created') {
 		// 1. destructure props from the Clerk User
 		const {
@@ -67,16 +69,31 @@ export async function POST(req: Request) {
 		// 2. define the new user => prep data from Clerk to Mongo
 		const user = {
 			clerkId: id,
-			email_addresses: email_addresses[0].email_address,
-			username: username,
-			first_name: first_name,
-			last_name: last_name,
+			email: email_addresses[0].email_address,
+			username: username!,
+			firstName: first_name,
+			lastName: last_name,
 			photo: image_url,
 		};
 
 		// 3. server action that creates User
-		// const newUser = await createSecureServer(user);
+		const newUser = await createUser(user);
+
+		// 4. update metadata from clerk
+		if (newUser) {
+			await clerkClient.users.updateUserMetadata(id, {
+				publicMetadata: {
+					userId: newUser._id,
+				},
+			});
+		}
+		// 5. return
+		return NextResponse.json({ message: 'OK', user: newUser });
 	}
+
+	//! UPDATE USER
+
+	//! DELETE USER
 
 	return new Response('', { status: 200 });
 }
