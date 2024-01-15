@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { eventDefaultValues } from '@/constants';
 import { eventFormSchema } from '@/lib/validator';
+import Dropdown from './Dropdown';
 
 type EventFormProps = {
 	userId: string;
@@ -47,7 +48,8 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
 				className="flex flex-col gap-5">
-				<div className="flex flex-col gap-5 md:flex-row">
+				<div className="flex flex-col gap-5 lg:flex-row">
+					{/* Event Title */}
 					<FormField
 						control={form.control}
 						name="title"
@@ -64,17 +66,21 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 							</FormItem>
 						)}
 					/>
+					{/* Dropdown */}
 					<FormField
 						control={form.control}
 						name="categoryId"
 						render={({ field }) => (
 							<FormItem className="w-full">
 								<FormControl>
-									{/* <Input
-										placeholder="Event Title"
-										className="input-field"
-										{...field}
-									/> */}
+									<Dropdown
+										onChangeHandler={
+											field.onChange
+										}
+										value={
+											field.value
+										}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
