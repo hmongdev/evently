@@ -21,7 +21,7 @@ import { eventFormSchema } from '@/lib/validator';
 import { useState } from 'react';
 import { Textarea } from '../ui/textarea';
 import Dropdown from './Dropdown';
-import FileUploader from './FileUploader';
+import { FileUploader } from './FileUploader';
 
 type EventFormProps = {
 	userId: string;
@@ -43,8 +43,6 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 
 	// 4. Define a submit handler.
 	function onSubmit(values: z.infer<typeof eventFormSchema>) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
 		console.log(values);
 	}
 	// 6. Return <Form />
