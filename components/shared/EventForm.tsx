@@ -18,7 +18,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { eventDefaultValues } from '@/constants';
 import { eventFormSchema } from '@/lib/validator';
+import { useState } from 'react';
+import { Textarea } from '../ui/textarea';
 import Dropdown from './Dropdown';
+import FileUploader from './FileUploader';
 
 type EventFormProps = {
 	userId: string;
@@ -26,6 +29,8 @@ type EventFormProps = {
 };
 
 const EventForm = ({ userId, type }: EventFormProps) => {
+	// 8. useState for files
+	const [files, setFiles] = useState<File[]>([]);
 	// 7. import `eventDefaultValues` from constants/index.ts
 	const initialValues = eventDefaultValues;
 
@@ -48,8 +53,8 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 			<form
 				onSubmit={form.handleSubmit(onSubmit)}
 				className="flex flex-col gap-5">
+				{/* Event Title */}
 				<div className="flex flex-col gap-5 lg:flex-row">
-					{/* Event Title */}
 					<FormField
 						control={form.control}
 						name="title"
@@ -79,6 +84,49 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 										}
 										value={
 											field.value
+										}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
+
+				{/* Description + Image */}
+				<div className="flex flex-col gap-5 md:flex-row">
+					<FormField
+						control={form.control}
+						name="description"
+						render={({ field }) => (
+							<FormItem className="w-full">
+								<FormControl className="h-72">
+									<Textarea
+										placeholder="Description"
+										{...field}
+										className="textarea rounded-2xl"
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					{/* Image */}
+					<FormField
+						control={form.control}
+						name="imageUrl"
+						render={({ field }) => (
+							<FormItem className="w-full">
+								<FormControl className="h-72">
+									<FileUploader
+										onFieldChange={
+											field.onChange
+										}
+										imageUrl={
+											field.value
+										}
+										setFiles={
+											setFiles
 										}
 									/>
 								</FormControl>
