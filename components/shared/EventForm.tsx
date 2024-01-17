@@ -310,6 +310,8 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 																Ticket
 															</label>
 															<Checkbox
+																// onCheckedChange + checked
+																// required for checkbox to be true
 																onCheckedChange={
 																	field.onChange
 																}
