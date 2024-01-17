@@ -19,8 +19,12 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 
+import {
+	createCategory,
+	getAllCategories,
+} from '@/lib/actions/category.actions';
 import { ICategory } from '@/lib/database/models/category.model';
-import { useState } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 
 // 4. define dropdownprops
@@ -43,6 +47,18 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
 			setCategories((prevState) => [...prevState, category]);
 		});
 	};
+
+	// 9. useEffect
+	useEffect(() => {
+		const getCategories = async () => {
+			const categoryList = await getAllCategories();
+
+			categoryList &&
+				setCategories(categoryList as ICategory[]);
+		};
+
+		getCategories();
+	}, []);
 
 	return (
 		// 3. copy and paste select component

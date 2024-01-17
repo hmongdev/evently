@@ -22,25 +22,33 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { eventDefaultValues } from '@/constants';
+import { createEvent } from '@/lib/actions/event.actions';
+import { IEvent } from '@/lib/database/models/event.model';
+import { useUploadThing } from '@/lib/uploadthing';
 import { eventFormSchema } from '@/lib/validator';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Checkbox } from '../ui/checkbox';
 import { Textarea } from '../ui/textarea';
 import Dropdown from './Dropdown';
 import { FileUploader } from './FileUploader';
 
-
 type EventFormProps = {
-	userId: string;
-	type: 'Create' | 'Update';
-};
+  userId: string
+  type: "Create" | "Update"
+  event?: IEvent,
+  eventId?: string
+}
 
-const EventForm = ({ userId, type }: EventFormProps) => {
+const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
+	const router = useRouter();
 	// 8. useState for files
 	const [files, setFiles] = useState<File[]>([]);
 	// 7. import `eventDefaultValues` from constants/index.ts
 	const initialValues = eventDefaultValues;
+	// 9. import from uploadthing.ts
+	const { startUpload } = useUploadThing('imageUploader');
 
 	// 3. define form
 	const form = useForm<z.infer<typeof eventFormSchema>>({
@@ -50,9 +58,40 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 	});
 
 	// 4. Define a submit handler.
-	function onSubmit(values: z.infer<typeof eventFormSchema>) {
-		console.log(values);
+	async function onSubmit(values: z.infer<typeof eventFormSchema>) {
+		let uploadedImageUrl = values.imageUrl;
+
+		if (files.length > 0) {
+			// get uploaded images
+			const uploadedImages = await startUpload(files);
+
+			// check if uploaded images exist
+			if (!uploadedImages) {
+				return;
+			}
+			// else get image url
+			uploadedImageUrl = uploadedImages[0].url;
+		}
+
+		//! Create New Event
+		if (type === 'Create') {
+			try {
+				const newEvent = await createEvent({
+					event: { ...values, imageUrl: uploadedImageUrl },
+					userId,
+					path: '/profile'
+				});
+
+				if (newEvent) {
+					form.reset();
+					router.push(`/events/${newEvent._id}`);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		}
 	}
+	
 	// 6. Return <Form />
 	return (
 		<Form {...form}>
