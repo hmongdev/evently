@@ -1,4 +1,3 @@
-// this form will have keyboard/tap events so 'use client' is required
 'use client';
 
 // 1. import zodResolver, useForm, z
