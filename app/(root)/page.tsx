@@ -1,4 +1,6 @@
+import Collection from '@/components/shared/Collection';
 import { Button } from '@/components/ui/button';
+import { getAllEvents } from '@/lib/actions/event.actions';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -7,12 +9,14 @@ export default async function Home() {
 	// const searchText = (searchParams?.query as string) || '';
 	// const category = (searchParams?.category as string) || '';
 
-	// const events = await getAllEvents({
-	// 	query: searchText,
-	// 	category,
-	// 	page,
-	// 	limit: 6,
-	// });
+	const events = await getAllEvents({
+		query: '',
+		category: '',
+		page: 1,
+		limit: 6,
+	});
+
+	console.log(events);
 
 	return (
 		<>
@@ -65,15 +69,15 @@ export default async function Home() {
 					</ul>
 				</div>
 				{/* Events */}
-				{/* <Collection
+				<Collection
 					data={events?.data}
 					emptyTitle="No Events Found"
 					emptyStateSubtext="Come back later"
 					collectionType="All_Events"
 					limit={6}
-					page={page}
-					totalPages={events?.totalPages}
-				/> */}
+					page={1}
+					totalPages={2}
+				/>
 			</section>
 		</>
 	);
