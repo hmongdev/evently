@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { eventDefaultValues } from '@/constants';
-import { createEvent } from '@/lib/actions/event.actions';
+import { createEvent, updateEvent } from '@/lib/actions/event.actions';
 import { IEvent } from '@/lib/database/models/event.model';
 import { useUploadThing } from '@/lib/uploadthing';
 import { eventFormSchema } from '@/lib/validator';
@@ -34,18 +34,30 @@ import Dropdown from './Dropdown';
 import { FileUploader } from './FileUploader';
 
 type EventFormProps = {
-  userId: string
-  type: "Create" | "Update"
-  event?: IEvent,
-  eventId?: string
-}
+	userId: string;
+	type: 'Create' | 'Update';
+	event?: IEvent;
+	eventId?: string;
+};
 
 const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
 	const router = useRouter();
 	// 8. useState for files
 	const [files, setFiles] = useState<File[]>([]);
 	// 7. import `eventDefaultValues` from constants/index.ts
-	const initialValues = eventDefaultValues;
+	// 10. set default values for initialValues
+	const initialValues =
+		event && type === 'Update'
+			? {
+					...event,
+					startDateTime: new Date(
+						event.startDateTime
+					),
+					endDateTime: new Date(
+						event.endDateTime
+					),
+			  }
+			: eventDefaultValues;
 	// 9. import from uploadthing.ts
 	const { startUpload } = useUploadThing('imageUploader');
 
@@ -76,9 +88,12 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
 		if (type === 'Create') {
 			try {
 				const newEvent = await createEvent({
-					event: { ...values, imageUrl: uploadedImageUrl },
+					event: {
+						...values,
+						imageUrl: uploadedImageUrl,
+					},
 					userId,
-					path: '/profile'
+					path: '/profile',
 				});
 
 				if (newEvent) {
@@ -89,8 +104,37 @@ const EventForm = ({ userId, type, event, eventId }: EventFormProps) => {
 				console.log(error);
 			}
 		}
+		// 11. Create update action for events
+		//! Update Existing Event
+		if (type === 'Update') {
+			if (!eventId) {
+				router.back();
+				return;
+			}
+
+			try {
+				const updatedEvent = await updateEvent({
+					userId,
+					event: {
+						...values,
+						imageUrl: uploadedImageUrl,
+						_id: eventId,
+					},
+					path: `/events/${eventId}`,
+				});
+
+				if (updatedEvent) {
+					form.reset();
+					router.push(
+						`/events/${updatedEvent._id}`
+					);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		}
 	}
-	
+
 	// 6. Return <Form />
 	return (
 		<Form {...form}>
