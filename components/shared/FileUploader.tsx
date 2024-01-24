@@ -1,6 +1,5 @@
 'use client';
 
-import type { FileWithPath } from '@uploadthing/react';
 import { useDropzone } from '@uploadthing/react/hooks';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { generateClientDropzoneAccept } from 'uploadthing/client';
@@ -23,7 +22,7 @@ export function FileUploader({
 }: FileUploaderProps) {
 	// onDrop => know when a file is dropped
 	// useCallback is waiting for specific files
-	const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+	const onDrop = useCallback((acceptedFiles: File[]) => {
 		setFiles(acceptedFiles);
 		onFieldChange(convertFileToUrl(acceptedFiles[0]));
 	}, []);
