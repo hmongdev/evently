@@ -1,3 +1,4 @@
+import CategoryFilter from '@/components/shared/CategoryFilter';
 import Collection from '@/components/shared/Collection';
 import Search from '@/components/shared/Search';
 import { Button } from '@/components/ui/button';
@@ -17,8 +18,6 @@ export default async function Home({ searchParams }: SearchParamProps) {
 		page,
 		limit: 6,
 	});
-
-	console.log(events);
 
 	return (
 		<>
@@ -40,7 +39,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
 						<Button
 							size="lg"
 							asChild
-							className="button w-full sm:w-fit mx-auto">
+							className="button w-full sm:w-fit">
 							<Link href="#events">
 								Explore Now
 							</Link>
@@ -65,20 +64,18 @@ export default async function Home({ searchParams }: SearchParamProps) {
 				</h2>
 
 				<div className="flex w-full flex-col gap-5 md:flex-row">
-					<ul>
-						<Search />
-						<li>Filter</li>
-					</ul>
+					<Search />
+					<CategoryFilter />
 				</div>
-				{/* Events */}
+
 				<Collection
 					data={events?.data}
 					emptyTitle="No Events Found"
 					emptyStateSubtext="Come back later"
 					collectionType="All_Events"
 					limit={6}
-					page={1}
-					totalPages={2}
+					page={page}
+					totalPages={events?.totalPages}
 				/>
 			</section>
 		</>
